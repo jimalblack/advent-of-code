@@ -53,6 +53,24 @@ defmodule Advent.Day06 do
     nil
   """
   def part2(data) do
-    nil
+    data
+    |> Enum.map(fn group ->
+      group
+      |> String.split()
+      |> Enum.reduce({0, %{}}, fn response, {response_count, responses} ->
+        new_responses =
+          Enum.reduce(String.graphemes(response), responses, fn response, response_map ->
+            Map.update(response_map, response, 1, &(&1 + 1))
+          end)
+
+        {response_count + 1, new_responses}
+      end)
+    end)
+    |> Enum.reduce(0, fn {response_count, responses}, acc ->
+      all_responded =
+        Enum.filter(Map.to_list(responses), fn {_, count} -> count == response_count end)
+
+      length(all_responded) + acc
+    end)
   end
 end
